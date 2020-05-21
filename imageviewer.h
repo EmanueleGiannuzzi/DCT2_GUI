@@ -22,7 +22,6 @@ public:
 private slots:
     void open();
     void saveAs();
-    void print();
     void copy();
     void paste();
     void zoomIn();
@@ -46,7 +45,6 @@ private:
     double scaleFactor;
 
     QAction *saveAsAct;
-    QAction *printAct;
     QAction *copyAct;
     QAction *zoomInAct;
     QAction *zoomOutAct;
