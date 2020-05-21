@@ -1,6 +1,8 @@
 #include "resultviewer.h"
 #include "ui_resultviewer.h"
 
+#include "fftw3.h"
+
 ResultViewer::ResultViewer(const QPixmap *before, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ResultViewer),
@@ -12,9 +14,6 @@ ResultViewer::ResultViewer(const QPixmap *before, QWidget *parent) :
     beforeScene->addPixmap(*this->beforePixmap);
     beforeScene->setSceneRect((*this->beforePixmap).rect());
     this->ui->beforeGraphicsView->setScene(this->beforeScene);
-    this->ui->beforeGraphicsView->fitInView((*this->beforePixmap).rect(), Qt::KeepAspectRatio);
-
-    //TODO: Rotellina che gira in afterGraphicsView
 
     //TODO: DCT2 COSE
 
@@ -24,6 +23,18 @@ ResultViewer::ResultViewer(const QPixmap *before, QWidget *parent) :
     afterScene->setSceneRect(this->afterPixmap.rect());
     this->ui->afterGraphicsView->setScene(this->afterScene);
     this->ui->afterGraphicsView->fitInView(this->afterPixmap.rect(), Qt::KeepAspectRatio);*/
+}
+
+void ResultViewer::resizeEvent(QResizeEvent* event)
+{
+   QMainWindow::resizeEvent(event);
+
+   this->ui->beforeGraphicsView->fitInView((*this->beforePixmap).rect(), Qt::KeepAspectRatio);
+}
+
+void ResultViewer::showEvent(QShowEvent *event)
+{
+    this->ui->beforeGraphicsView->fitInView((*this->beforePixmap).rect(), Qt::KeepAspectRatio);
 }
 
 ResultViewer::~ResultViewer()

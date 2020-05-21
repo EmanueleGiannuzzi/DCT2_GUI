@@ -17,6 +17,11 @@ public:
     ResultViewer(const QPixmap *before, QWidget *parent = nullptr);
     ~ResultViewer();
 
+private slots:
+    void resizeEvent(QResizeEvent* event);
+
+    void showEvent(QShowEvent *event);
+
 private:
     Ui::ResultViewer *ui;
 

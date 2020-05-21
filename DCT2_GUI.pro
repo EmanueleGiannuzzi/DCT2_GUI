@@ -21,6 +21,7 @@ SOURCES += \
     resultviewer.cpp
 
 HEADERS += \
+    fftw3.h \
     mainwindow.h \
     resultviewer.h
 
@@ -34,3 +35,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES +=
+
+LIBS += $$PWD/fftw-3.3.5-dll32/libfftw3-3.dll
+LIBS += -lfftw3
