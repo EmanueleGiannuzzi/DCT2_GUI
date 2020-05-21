@@ -36,5 +36,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES +=
 
-LIBS += $$PWD/fftw-3.3.5-dll32/libfftw3-3.dll
-LIBS += -lfftw3
+win32: LIBS += $$PWD/fftw-3.3.5-dll32/libfftw3-3.dll
+unix: LIBS += -lfftw3

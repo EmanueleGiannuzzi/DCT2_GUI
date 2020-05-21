@@ -14,7 +14,7 @@ class ResultViewer : public QMainWindow
     Q_OBJECT
 
 public:
-    ResultViewer(const QPixmap *before, QWidget *parent = nullptr);
+    ResultViewer(const QImage *before, QWidget *parent = nullptr);
     ~ResultViewer();
 
 private slots:
@@ -25,10 +25,13 @@ private slots:
 private:
     Ui::ResultViewer *ui;
 
-    const QPixmap *beforePixmap;
+    const QImage *beforeImage;
+    QPixmap beforePixmap;
     QPixmap afterPixmap;
     QGraphicsScene *beforeScene;
     QGraphicsScene *afterScene;
+
+    static double *FFTWCompute(const uchar *input, int width, int height);
 
 };
 

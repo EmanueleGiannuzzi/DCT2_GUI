@@ -40,7 +40,6 @@ void MainWindow::loadPreviewImage()
     this->previewImage = new QImage();
     this->previewImage->load(imagePath);
 
-
     this->previewPixmap = QPixmap::fromImage(*previewImage);
 
     scene = new QGraphicsScene(this);
@@ -95,6 +94,6 @@ void MainWindow::on_dParamSlider_valueChanged(int value)
 
 void MainWindow::on_runButton_clicked()
 {
-    this->resultWindow = new ResultViewer(&this->previewPixmap, this);
+    this->resultWindow = new ResultViewer(this->previewImage, this);
     resultWindow->show();
 }
