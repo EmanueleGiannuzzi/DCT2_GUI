@@ -53,5 +53,3 @@ private:
     QAction *normalSizeAct;
     QAction *fitToWindowAct;
 };
-
-#endif
