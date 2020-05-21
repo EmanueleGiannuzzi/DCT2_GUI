@@ -1,8 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
+#include "resultviewer.h"
 
+#include <QMainWindow>
 #include <QGraphicsScene>
 
 QT_BEGIN_NAMESPACE
@@ -23,12 +24,18 @@ private slots:
 
     void on_fParamSpinBox_valueChanged(int arg1);
 
-    void on_dParamSlider_sliderMoved(int position);
+    void on_dParamSlider_rangeChanged(int min, int max);
+
+    void on_dParamSlider_valueChanged(int value);
+
+    void on_runButton_clicked();
 
 private:
     Ui::MainWindow *ui;
 
-    QImage  *imageObject;
+    ResultViewer *resultWindow;
+
+    QImage *imageObject;
     QPixmap image;
     QGraphicsScene *scene;
 

@@ -2,29 +2,32 @@
 #include "ui_mainwindow.h"
 
 #include <QFileDialog>
+#include <QStandardPaths>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete resultWindow;
+    delete imageObject;
+    delete scene;
 }
 
 
 void MainWindow::on_toolButton_clicked()
 {
+    QString imageDirectory = QStandardPaths::locate(QStandardPaths::PicturesLocation, "", QStandardPaths::LocateDirectory);
     QString imagePath = QFileDialog::getOpenFileName(
                 this,
-                tr("Open File"),
-                "",
-                tr("Bitmap (*.bmp)" )
+                tr("Open BMP Image"),
+                imageDirectory,
+                tr("Bitmap (*.bmp)")
                 );
     this->ui->imagePathLineEdit->setText(imagePath);
     loadPreviewImage();
@@ -54,12 +57,8 @@ void MainWindow::updateFParam()
 {
     int width = this->image.width();
     int height = this->image.height();
-    if(width < height) {
-        this->ui->fParamSpinBox->setMaximum(width);
-    }
-    else {
-        this->ui->fParamSpinBox->setMaximum(height);
-    }
+
+    this->ui->fParamSpinBox->setMaximum(qMin(width, height));
     updateDParam();
 }
 
@@ -82,7 +81,20 @@ void MainWindow::on_fParamSpinBox_valueChanged(int arg1)
     updateDParam();
 }
 
-void MainWindow::on_dParamSlider_sliderMoved(int position)
+void MainWindow::on_dParamSlider_rangeChanged(int min, int max)
 {
-    this->ui->dParamValueLabel->setText(QString::number(position));
+    if(this->ui->dParamSlider->value() > max) {
+        this->ui->dParamSlider->setValue(max);
+    }
+}
+
+void MainWindow::on_dParamSlider_valueChanged(int value)
+{
+    this->ui->dParamValueLabel->setText(QString::number(value));
+}
+
+void MainWindow::on_runButton_clicked()
+{
+    this->resultWindow = new ResultViewer();
+    resultWindow->show();
 }
