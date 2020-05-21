@@ -15,7 +15,7 @@ MainWindow::~MainWindow()
 {
     delete ui;
     delete resultWindow;
-    delete imageObject;
+    delete previewImage;
     delete scene;
 }
 
@@ -37,26 +37,26 @@ void MainWindow::loadPreviewImage()
 {
     QString imagePath = this->ui->imagePathLineEdit->text();
 
-    this->imageObject = new QImage();
-    this->imageObject->load(imagePath);
+    this->previewImage = new QImage();
+    this->previewImage->load(imagePath);
 
 
-    this->image = QPixmap::fromImage(*imageObject);
+    this->previewPixmap = QPixmap::fromImage(*previewImage);
 
     scene = new QGraphicsScene(this);
-    scene->addPixmap(this->image);
-    scene->setSceneRect(this->image.rect());
+    scene->addPixmap(this->previewPixmap);
+    scene->setSceneRect(this->previewPixmap.rect());
 
     this->ui->previewGraphicsView->setScene(this->scene);
-    this->ui->previewGraphicsView->fitInView(this->image.rect(), Qt::KeepAspectRatio);
+    this->ui->previewGraphicsView->fitInView(this->previewPixmap.rect(), Qt::KeepAspectRatio);
 
     updateFParam();
 }
 
 void MainWindow::updateFParam()
 {
-    int width = this->image.width();
-    int height = this->image.height();
+    int width = this->previewPixmap.width();
+    int height = this->previewPixmap.height();
 
     this->ui->fParamSpinBox->setMaximum(qMin(width, height));
     updateDParam();
@@ -73,7 +73,7 @@ void MainWindow::resizeEvent(QResizeEvent* event)
 {
    QMainWindow::resizeEvent(event);
 
-   this->ui->previewGraphicsView->fitInView(this->image.rect(), Qt::KeepAspectRatio);
+   this->ui->previewGraphicsView->fitInView(this->previewPixmap.rect(), Qt::KeepAspectRatio);
 }
 
 void MainWindow::on_fParamSpinBox_valueChanged(int arg1)
@@ -95,6 +95,6 @@ void MainWindow::on_dParamSlider_valueChanged(int value)
 
 void MainWindow::on_runButton_clicked()
 {
-    this->resultWindow = new ResultViewer();
+    this->resultWindow = new ResultViewer(&this->previewPixmap, this);
     resultWindow->show();
 }

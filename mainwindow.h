@@ -35,8 +35,8 @@ private:
 
     ResultViewer *resultWindow;
 
-    QImage *imageObject;
-    QPixmap image;
+    QImage *previewImage;
+    QPixmap previewPixmap;
     QGraphicsScene *scene;
 
     void loadPreviewImage();
