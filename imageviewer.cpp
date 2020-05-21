@@ -51,7 +51,6 @@ void ImageViewer::setImage(const QImage &newImage)
     scaleFactor = 1.0;
 
     scrollArea->setVisible(true);
-    printAct->setEnabled(true);
     fitToWindowAct->setEnabled(true);
     updateActions();
 
