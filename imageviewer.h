@@ -11,7 +11,7 @@ class QMenu;
 class QScrollArea;
 class QScrollBar;
 
-class ImageViewer : public QMainWindow
+class ImageViewer : public QWidget
 {
     Q_OBJECT
 
@@ -28,10 +28,9 @@ private slots:
     void zoomOut();
     void normalSize();
     void fitToWindow();
-    void about();
 
 private:
-    void createActions();
+    //void createActions();
     void createMenus();
     void updateActions();
     bool saveFile(const QString &fileName);

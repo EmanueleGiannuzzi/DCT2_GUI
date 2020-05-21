@@ -14,9 +14,13 @@ ImageViewer::ImageViewer()
     scrollArea->setBackgroundRole(QPalette::Dark);
     scrollArea->setWidget(imageLabel);
     scrollArea->setVisible(false);
-    setCentralWidget(scrollArea);
 
-    createActions();
+    QGridLayout *layout = new QGridLayout(this);
+    this->setLayout(layout);
+    layout->addWidget(scrollArea);
+    //setCentralWidget(scrollArea);
+
+    //createActions();
 
     resize(QGuiApplication::primaryScreen()->availableSize() * 3 / 5);
 }
@@ -40,7 +44,7 @@ bool ImageViewer::loadFile(const QString &fileName)
 
     const QString message = tr("Opened \"%1\", %2x%3, Depth: %4")
         .arg(QDir::toNativeSeparators(fileName)).arg(image.width()).arg(image.height()).arg(image.depth());
-    statusBar()->showMessage(message);
+    //statusBar()->showMessage(message);
     return true;
 }
 
@@ -70,7 +74,7 @@ bool ImageViewer::saveFile(const QString &fileName)
         return false;
     }
     const QString message = tr("Wrote \"%1\"").arg(QDir::toNativeSeparators(fileName));
-    statusBar()->showMessage(message);
+    //statusBar()->showMessage(message);
     return true;
 }
 
@@ -139,13 +143,13 @@ void ImageViewer::paste()
 #ifndef QT_NO_CLIPBOARD
     const QImage newImage = clipboardImage();
     if (newImage.isNull()) {
-        statusBar()->showMessage(tr("No image in clipboard"));
+        //statusBar()->showMessage(tr("No image in clipboard"));
     } else {
         setImage(newImage);
         setWindowFilePath(QString());
         const QString message = tr("Obtained image from clipboard, %1x%2, Depth: %3")
             .arg(newImage.width()).arg(newImage.height()).arg(newImage.depth());
-        statusBar()->showMessage(message);
+        //statusBar()->showMessage(message);
     }
 #endif // !QT_NO_CLIPBOARD
 }
@@ -175,24 +179,7 @@ void ImageViewer::fitToWindow()
     updateActions();
 }
 
-void ImageViewer::about()
-{
-    QMessageBox::about(this, tr("About Image Viewer"),
-            tr("<p>The <b>Image Viewer</b> example shows how to combine QLabel "
-               "and QScrollArea to display an image. QLabel is typically used "
-               "for displaying a text, but it can also display an image. "
-               "QScrollArea provides a scrolling view around another widget. "
-               "If the child widget exceeds the size of the frame, QScrollArea "
-               "automatically provides scroll bars. </p><p>The example "
-               "demonstrates how QLabel's ability to scale its contents "
-               "(QLabel::scaledContents), and QScrollArea's ability to "
-               "automatically resize its contents "
-               "(QScrollArea::widgetResizable), can be used to implement "
-               "zooming and scaling features. </p><p>In addition the example "
-               "shows how to use QPainter to print an image.</p>"));
-}
-
-void ImageViewer::createActions()
+/*void ImageViewer::createActions()
 {
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
 
@@ -241,7 +228,7 @@ void ImageViewer::createActions()
 
     helpMenu->addAction(tr("&About"), this, &ImageViewer::about);
     helpMenu->addAction(tr("About &Qt"), &QApplication::aboutQt);
-}
+}*/
 
 void ImageViewer::updateActions()
 {
