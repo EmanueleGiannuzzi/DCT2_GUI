@@ -58,7 +58,11 @@
           </widget>
          </item>
          <item row="2" column="0" alignment="Qt::AlignTop">
-          <widget class="QLineEdit" name="openFileLineEdit"/>
+          <widget class="QLineEdit" name="imagePathLineEdit">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
          <item row="2" column="1">
           <widget class="QToolButton" name="toolButton">
@@ -71,10 +75,30 @@
        </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="previewLayout"/>
+       <layout class="QVBoxLayout" name="previewLayout">
+        <item>
+         <widget class="QGraphicsView" name="previewGraphicsView"/>
+        </item>
+       </layout>
       </item>
       <item>
        <layout class="QGridLayout" name="gridLayout">
+        <item row="1" column="0">
+         <widget class="QSpinBox" name="fParamSpinBox">
+          <property name="minimumSize">
+           <size>
+            <width>80</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>1</number>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="0">
          <widget class="QLabel" name="fParamLabel">
           <property name="text">
@@ -95,7 +119,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QSlider" name="horizontalSlider">
+           <widget class="QSlider" name="dParamSlider">
             <property name="maximum">
              <number>0</number>
             </property>
@@ -114,24 +138,25 @@
          </layout>
         </item>
         <item row="0" column="1">
-         <widget class="QLabel" name="dParamLabel">
-          <property name="text">
-           <string>D Parameter</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QSpinBox" name="fParamSpinBox">
-          <property name="minimumSize">
-           <size>
-            <width>80</width>
-            <height>0</height>
-           </size>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="dParameterLabelsHLayout">
+          <item>
+           <widget class="QLabel" name="dParamLabel">
+            <property name="text">
+             <string>D Parameter</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="dParamValueLabel">
+            <property name="text">
+             <string>0</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>
