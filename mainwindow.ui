@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>484</width>
-    <height>390</height>
+    <width>382</width>
+    <height>443</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,7 +33,7 @@
        <number>20</number>
       </property>
       <item alignment="Qt::AlignTop">
-       <widget class="QWidget" name="" native="true">
+       <widget class="QWidget" name="widget" native="true">
         <layout class="QGridLayout" name="selectFileLayout">
          <property name="leftMargin">
           <number>1</number>
@@ -47,9 +47,6 @@
          <property name="bottomMargin">
           <number>10</number>
          </property>
-         <item row="2" column="0" alignment="Qt::AlignTop">
-          <widget class="QLineEdit" name="openFileLineEdit"/>
-         </item>
          <item row="0" column="0">
           <widget class="QLabel" name="selectFileLabel">
            <property name="text">
@@ -60,16 +57,13 @@
            </property>
           </widget>
          </item>
+         <item row="2" column="0" alignment="Qt::AlignTop">
+          <widget class="QLineEdit" name="openFileLineEdit"/>
+         </item>
          <item row="2" column="1">
-          <widget class="QPushButton" name="openFileButton">
+          <widget class="QToolButton" name="toolButton">
            <property name="text">
-            <string/>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>16</width>
-             <height>16</height>
-            </size>
+            <string>...</string>
            </property>
           </widget>
          </item>
@@ -79,13 +73,20 @@
       <item>
        <layout class="QVBoxLayout" name="previewLayout">
         <item>
-         <widget class="QToolButton" name="toolButton">
-          <property name="text">
-           <string>...</string>
+         <widget class="QScrollArea" name="scrollArea">
+          <property name="widgetResizable">
+           <bool>true</bool>
           </property>
-          <property name="arrowType">
-           <enum>Qt::LeftArrow</enum>
-          </property>
+          <widget class="QWidget" name="scrollAreaWidgetContents">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>340</width>
+             <height>202</height>
+            </rect>
+           </property>
+          </widget>
          </widget>
         </item>
        </layout>
@@ -172,7 +173,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>484</width>
+     <width>382</width>
      <height>20</height>
     </rect>
    </property>
