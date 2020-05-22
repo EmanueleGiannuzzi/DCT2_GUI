@@ -31,8 +31,8 @@ private:
     QGraphicsScene *beforeScene;
     QGraphicsScene *afterScene;
 
-    static double *FFTWCompute(const uchar *input, int width, int height);
-    static uchar *inverseFFTWCompute(const double *input, int width, int height);
+    static double *FFTWCompute(const uchar *input, int size);
+    static uchar *inverseFFTWCompute(const double *input, int size);
 
 };
 
