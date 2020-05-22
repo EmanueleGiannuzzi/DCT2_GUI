@@ -38,16 +38,21 @@ ResultViewer::ResultViewer(const QImage *before, QWidget *parent) :
 
 double *ResultViewer::FFTWCompute(const uchar *input, int width, int height)
 {
-    int arraySize = width*height;
-    double in[arraySize], *out;
-    out = new double[width*height];
+    double *in = new double[width*height];
+    double *out = new double[width*height];
 
-    std::copy(input, input + arraySize, in);
+    std::copy(input, input + width*height, in);
+
+    /*for(int i = 0; i<width*height; ++i) {
+        in[i] = (double)input[i];
+        qInfo() << in[i];
+    }*/
 
     fftw_plan my_plan;
     my_plan = fftw_plan_r2r_2d(height, width, in, out, FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE);
     fftw_execute(my_plan);
     fftw_destroy_plan(my_plan);
+    delete[] in;
     return out;
 }
 
