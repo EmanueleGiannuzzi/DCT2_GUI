@@ -24,24 +24,27 @@ ResultViewer::ResultViewer(const QImage *before, QWidget *parent) :
 
     double *arrayResult = ResultViewer::FFTWCompute(this->beforeImage->bits(), width, height);
 
+    uchar *inverseResult = ResultViewer::inverseFFTWCompute(arrayResult, width, height);
 
+    QImage resultImage = QImage(inverseResult, width, height, QImage::Format_Indexed8);
 
-    delete arrayResult;
+    delete[] inverseResult;
+    delete[] arrayResult;
 
-  /*this->afterPixmap = QPixmap::fromImage(*after);
+    this->afterPixmap = QPixmap::fromImage(resultImage);
     afterScene = new QGraphicsScene(this);
     afterScene->addPixmap(this->afterPixmap);
     afterScene->setSceneRect(this->afterPixmap.rect());
     this->ui->afterGraphicsView->setScene(this->afterScene);
-    this->ui->afterGraphicsView->fitInView(this->afterPixmap.rect(), Qt::KeepAspectRatio);*/
 }
 
 double *ResultViewer::FFTWCompute(const uchar *input, int width, int height)
 {
-    double *in = new double[width*height];
-    double *out = new double[width*height];
+    int arraySize = width*height;
+    double *in = new double[arraySize];
+    double *out = new double[arraySize];
 
-    std::copy(input, input + width*height, in);
+    std::copy(input, input + arraySize, in);
 
     /*for(int i = 0; i<width*height; ++i) {
         in[i] = (double)input[i];
@@ -49,36 +52,46 @@ double *ResultViewer::FFTWCompute(const uchar *input, int width, int height)
     }*/
 
     fftw_plan my_plan;
-    my_plan = fftw_plan_r2r_2d(height, width, in, out, FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE);
+    my_plan = fftw_plan_r2r_2d(width, height, in, out, FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE);
     fftw_execute(my_plan);
     fftw_destroy_plan(my_plan);
     delete[] in;
     return out;
 }
 
-/*double *ResultViewer::inverseFFTWCompute(const double *input)
+uchar *ResultViewer::inverseFFTWCompute(const double *input, int width, int height)
 {
-    double *in, *out;
     int arraySize = width*height;
-    out = new double[arraySize];
-    in = (double *)input;
+    uchar *out = new uchar[arraySize];
+    double *tempOut = new double[arraySize];
+    double *in = new double[arraySize];
+
+    std::copy(input, input + arraySize, in);
+
     fftw_plan my_plan;
-    my_plan = fftw_plan_r2r_1d(arraySize, in, out, FFTW_REDFT10, FFTW_ESTIMATE);
+    my_plan = fftw_plan_r2r_2d(width, height, in, tempOut, FFTW_REDFT01, FFTW_REDFT01, FFTW_ESTIMATE);
     fftw_execute(my_plan);
     fftw_destroy_plan(my_plan);
+
+    std::copy(tempOut, tempOut + arraySize, out);
+
+    delete[] in;
+    delete[] tempOut;
     return out;
-}*/
+}
 
 void ResultViewer::resizeEvent(QResizeEvent* event)
 {
-   QMainWindow::resizeEvent(event);
+    QMainWindow::resizeEvent(event);
 
-   this->ui->beforeGraphicsView->fitInView(this->beforePixmap.rect(), Qt::KeepAspectRatio);
+    this->ui->beforeGraphicsView->fitInView(this->beforePixmap.rect(), Qt::KeepAspectRatio);
+    this->ui->afterGraphicsView->fitInView(this->afterPixmap.rect(), Qt::KeepAspectRatio);
 }
 
 void ResultViewer::showEvent(QShowEvent *event)
 {
     this->ui->beforeGraphicsView->fitInView(this->beforePixmap.rect(), Qt::KeepAspectRatio);
+    this->ui->afterGraphicsView->fitInView(this->afterPixmap.rect(), Qt::KeepAspectRatio);
 }
 
 ResultViewer::~ResultViewer()
