@@ -50,6 +50,10 @@ void MainWindow::loadPreviewImage()
     this->ui->previewGraphicsView->fitInView(this->previewPixmap.rect(), Qt::KeepAspectRatio);
 
     updateFParam();
+
+    this->ui->runButton->setEnabled(true);
+    this->ui->dParamSlider->setEnabled(true);
+    this->ui->fParamSpinBox->setEnabled(true);
 }
 
 void MainWindow::updateFParam()

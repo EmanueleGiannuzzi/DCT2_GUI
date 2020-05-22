@@ -20,6 +20,8 @@ ResultViewer::ResultViewer(const QImage *before, QWidget *parent) :
     int width = this->beforeImage->width();
     int height = this->beforeImage->height();
 
+
+
     double *arrayResult = ResultViewer::FFTWCompute(this->beforeImage->bits(), width, height);
 
 
@@ -36,12 +38,14 @@ ResultViewer::ResultViewer(const QImage *before, QWidget *parent) :
 
 double *ResultViewer::FFTWCompute(const uchar *input, int width, int height)
 {
-    double *in, *out;
     int arraySize = width*height;
-    out = new double[arraySize];
-    in = (double *)input;
+    double in[arraySize], *out;
+    out = new double[width*height];
+
+    std::copy(input, input + arraySize, in);
+
     fftw_plan my_plan;
-    my_plan = fftw_plan_r2r_1d(arraySize, in, out, FFTW_REDFT10, FFTW_ESTIMATE);
+    my_plan = fftw_plan_r2r_2d(height, width, in, out, FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE);
     fftw_execute(my_plan);
     fftw_destroy_plan(my_plan);
     return out;
