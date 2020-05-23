@@ -17,7 +17,7 @@ class ResultViewer : public QMainWindow
     Q_OBJECT
 
 public:
-    ResultViewer(const QImage *before, QWidget *parent = nullptr);
+    ResultViewer(const QImage *before, int F, int D, QWidget *parent = nullptr);
     ~ResultViewer();
 
 private slots:

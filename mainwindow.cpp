@@ -98,6 +98,6 @@ void MainWindow::on_dParamSlider_valueChanged(int value)
 
 void MainWindow::on_runButton_clicked()
 {
-    this->resultWindow = new ResultViewer(this->previewImage, this);
+    this->resultWindow = new ResultViewer(this->previewImage, this->ui->fParamSpinBox->value(), this->ui->dParamSlider->value(), this);
     resultWindow->show();
 }
