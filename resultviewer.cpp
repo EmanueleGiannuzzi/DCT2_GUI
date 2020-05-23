@@ -22,12 +22,14 @@ ResultViewer::ResultViewer(const QImage *before, QWidget *parent) :
     int width = this->beforeImage->width();
     int height = this->beforeImage->height();
 
-    int size = qMin(width, height);
+    int size = qMin(width, height);//TODO
 
 
-    double *arrayResult = ResultViewer::FFTWCompute(this->beforeImage->bits(), size);
+    //double *arrayResult = ResultViewer::FFTWCompute(this->beforeImage->bits(), size);
+    //uchar *inverseResult = ResultViewer::inverseFFTWCompute(arrayResult, size);
 
-    uchar *inverseResult = ResultViewer::inverseFFTWCompute(arrayResult, size);
+    double *arrayResult = ResultViewer::FFTWCompute2D(this->beforeImage->bits(), size);
+    uchar *inverseResult = ResultViewer::iFFTWCompute2D(arrayResult, size);
 
     //QImage resultImage = QImage(*inverseResult, width, height, QImage::Format_Grayscale8);
     QImage resultImage = QImage(width, height, QImage::Format_Grayscale8);
@@ -35,26 +37,18 @@ ResultViewer::ResultViewer(const QImage *before, QWidget *parent) :
         for(int j = 0; j<width; ++j) {
             int colorValue = inverseResult[i*width+j];
             QRgb color = qRgb(colorValue, colorValue, colorValue);
-            resultImage.setPixel(i, j, color);
+            resultImage.setPixel(j, i, color);
         }
     }
-
 
     delete[] inverseResult;
     delete[] arrayResult;
 
-    qInfo() << "BANANA1";
-
     this->afterPixmap = QPixmap::fromImage(resultImage);
-    qInfo() << "BANANA2";
     afterScene = new QGraphicsScene(this);
-    qInfo() << "BANANA3";
     afterScene->addPixmap(this->afterPixmap);
-    qInfo() << "BANANA4";
     afterScene->setSceneRect(this->afterPixmap.rect());
-    qInfo() << "BANANA5";
     this->ui->afterGraphicsView->setScene(this->afterScene);
-    qInfo() << "BANANA6";
 }
 
 double *ResultViewer::FFTWCompute(const uchar *input, int size)
@@ -72,6 +66,7 @@ double *ResultViewer::FFTWCompute(const uchar *input, int size)
     my_plan = fftw_plan_r2r_2d(size, size, in, out, FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE);
     fftw_execute(my_plan);
     fftw_destroy_plan(my_plan);
+
     delete[] in;
     return out;
 }
@@ -94,7 +89,6 @@ uchar *ResultViewer::inverseFFTWCompute(const double *input, int size)
     for(int i = 0; i<arraySize; ++i) {
         in[i] = (double)input[i];
     }
-
 
     fftw_plan my_plan;
     my_plan = fftw_plan_r2r_2d(size, size, in, tempOut, FFTW_REDFT01, FFTW_REDFT01, FFTW_ESTIMATE);
