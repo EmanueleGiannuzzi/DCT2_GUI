@@ -5,6 +5,8 @@
 
 #include <QGraphicsScene>
 #include <fftw3.h>
+#include <math.h>
+#include <QDebug>
 
 namespace Ui {
 class ResultViewer;
@@ -38,7 +40,7 @@ private:
     static double *FFTWCompute1D(const double *input, int size)
     {
         double *in = new double[size];
-        double *out = nullptr;
+        double *out = new double[size];
 
         for(int i = 0; i<size; ++i) {
             in[i] = input[i];
@@ -49,6 +51,13 @@ private:
         fftw_execute(my_plan);
         fftw_destroy_plan(my_plan);
         fftw_cleanup();
+
+        out[0] *= sqrt(1.0 / 4 / size);
+        double f = sqrt(1.0 / 2 / size);
+        for(int i = 1; i < size; ++i) {
+            out[i] *= f;
+        }
+
 
         delete[] in;
         return out;
@@ -66,23 +75,31 @@ private:
 
         double *newMat = new double[arraySize];
         for(int i = 0; i<size; ++i) {
-            double *row = &in[i];
-            double *resultRow = FFTWCompute1D(row, size);
+            //double *row = &in[i];
+
+            double *row = new double[size];
+            for(int j = 0; j<size; ++j) {
+                row[j] = in[i*size+j];
+            }
+            double *resultRow = iFFTWCompute1D(row, size);
             for(int j = 0; j<size; ++j) {
                 newMat[i*size+j] = resultRow[j];
             }
+            delete[] row;
         }
 
         for(int j = 0; j<size; ++j) {
-            double col[size];
+            double *col = new double[size];
             for(int i = 0; i<size; ++i) {
-                col[j] = newMat[i*size+j];
+                col[i] = newMat[i*size+j];
             }
-            double *resultCol = FFTWCompute1D(col, size);
-            for(int k = 0; k<size; ++k) {
-                newMat[k*size+j] = resultCol[k];
+            double *resultCol = iFFTWCompute1D(col, size);
+            for(int i = 0; i<size; ++i) {
+                newMat[i*size+j] = resultCol[i];
             }
+            delete[] col;
         }
+
 
         delete[] in;
         return newMat;
@@ -93,9 +110,14 @@ private:
         double *out = new double[size];
         double *in = new double[size];
 
-        for(int i = 0; i<size; ++i) {
-            in[i] = (double)input[i];
+        in[0] = input[0] / sqrt(1.0 / 4 / size);
+        double f = sqrt(1.0 / 2 / size);
+        for(int i = 1; i < size; ++i) {
+            in[i] = input[i] / f;
         }
+        /*for(int i = 0; i<size; ++i) {
+            in[i] = (double)input[i];
+        }*/
 
         fftw_plan my_plan;
         my_plan = fftw_plan_r2r_1d(size, in, out, FFTW_REDFT01, FFTW_ESTIMATE);
@@ -119,40 +141,47 @@ private:
 
         uchar *out = new uchar[arraySize];
 
-        double *tempOut = new double[arraySize];
         double *in = new double[arraySize];
 
         for(int i = 0; i<arraySize; ++i) {
             in[i] = (double)input[i];
         }
 
-        double newMat[arraySize];
+        double *newMat = new double[arraySize];
         for(int i = 0; i<size; ++i) {
-            double *row = &in[i];
+            //double *row = &in[i];
+
+            double *row = new double[size];
+            for(int j = 0; j<size; ++j) {
+                row[j] = in[i*size+j];
+            }
             double *resultRow = iFFTWCompute1D(row, size);
             for(int j = 0; j<size; ++j) {
                 newMat[i*size+j] = resultRow[j];
             }
+            delete[] row;
         }
 
         for(int j = 0; j<size; ++j) {
-            double col[size];
+            double *col = new double[size];
             for(int i = 0; i<size; ++i) {
-                col[j] = newMat[i*size+j];
+                col[i] = newMat[i*size+j];
             }
             double *resultCol = iFFTWCompute1D(col, size);
-            for(int k = 0; k<size; ++k) {
-                newMat[k*size+j] = resultCol[k];
+            for(int i = 0; i<size; ++i) {
+                newMat[i*size+j] = resultCol[i];
             }
+            delete[] col;
         }
 
         for(int i = 0; i<arraySize; ++i) {
-            double trimmedValue = qMax(qMin(newMat[i], 1.0), 0.0);
-            out[i] = (uchar)(trimmedValue * 255);
+            //qInfo() << "out : " << newMat[i];
+            int trimmedValue = qMax(qMin((int)(newMat[i] * 255), 255), 0);
+            out[i] = (uchar)trimmedValue;
         }
 
         delete[] in;
-        delete[] tempOut;
+        delete[] newMat;
 
         return out;
     }

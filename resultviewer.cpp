@@ -4,7 +4,6 @@
 #include <fftw3.h>
 #include <QDebug>
 
-#include <math.h>
 
 ResultViewer::ResultViewer(const QImage *before, QWidget *parent) :
     QMainWindow(parent),
@@ -24,12 +23,30 @@ ResultViewer::ResultViewer(const QImage *before, QWidget *parent) :
 
     int size = qMin(width, height);//TODO
 
+    /*qInfo() << "BANANA";
+    double arrayTest[] = {1,2,3,4,5, 6,7,8};
+    double *arrayResult1 = ResultViewer::FFTWCompute1D(arrayTest, 8);
+    qInfo() << "BANANA1";
+    for(int i = 0; i<8; i++) {
+        qInfo() << arrayResult1[i];
+    }
+    double *inverseResult1 = ResultViewer::iFFTWCompute1D(arrayResult1, 8);
+    for(int i = 0; i<8; i++) {
+        qInfo() << inverseResult1[i];
+    }
+
+    delete[] inverseResult1;
+    delete[] arrayResult1;
+*/
 
     //double *arrayResult = ResultViewer::FFTWCompute(this->beforeImage->bits(), size);
     //uchar *inverseResult = ResultViewer::inverseFFTWCompute(arrayResult, size);
 
+    qInfo() << "BANANA";
     double *arrayResult = ResultViewer::FFTWCompute2D(this->beforeImage->bits(), size);
+    qInfo() << "BANANA1";
     uchar *inverseResult = ResultViewer::iFFTWCompute2D(arrayResult, size);
+    qInfo() << "BANANA2";
 
     //QImage resultImage = QImage(*inverseResult, width, height, QImage::Format_Grayscale8);
     QImage resultImage = QImage(width, height, QImage::Format_Grayscale8);
@@ -44,11 +61,14 @@ ResultViewer::ResultViewer(const QImage *before, QWidget *parent) :
     delete[] inverseResult;
     delete[] arrayResult;
 
+
     this->afterPixmap = QPixmap::fromImage(resultImage);
     afterScene = new QGraphicsScene(this);
     afterScene->addPixmap(this->afterPixmap);
     afterScene->setSceneRect(this->afterPixmap.rect());
     this->ui->afterGraphicsView->setScene(this->afterScene);
+
+
 }
 
 double *ResultViewer::FFTWCompute(const uchar *input, int size)
