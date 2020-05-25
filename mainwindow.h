@@ -31,6 +31,8 @@ private slots:
 
     void on_runButton_clicked();
 
+    void on_imagePathLineEdit_returnPressed();
+
 private:
     Ui::MainWindow *ui;
 

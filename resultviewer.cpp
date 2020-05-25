@@ -47,8 +47,15 @@ ResultViewer::ResultViewer(const QImage *before, int F, int D, QWidget *parent) 
 
     QVector<uchar*> compressed;//(dimRow * dimCol);
     for(uchar* matrix : matrices) {
-        double *arrayResult = ResultViewer::FFTWCompute2D(matrix, F);
-        uchar *inverseResult = ResultViewer::iFFTWCompute2D(arrayResult, F);
+        double *arrayResult = ResultViewer::FFTWCompute(matrix, F);
+        for(int k = 0; k < F-1; ++k) {
+            for(int l = 0; l < F-1; ++l) {
+                if (k+l > D){
+                    arrayResult[k+dimCol*l] = 0.0f;
+                }
+            }
+        }
+        uchar *inverseResult = ResultViewer::iFFTWCompute(arrayResult, F);
         compressed.push_back(inverseResult);
     }
 
@@ -61,7 +68,6 @@ ResultViewer::ResultViewer(const QImage *before, int F, int D, QWidget *parent) 
             const uchar *matrix = compressed.at(k*dimRow+l);
             int row = k*F;
             int col = l*F;
-            qInfo() << row << " " << col;
             for(int i = 0; i < F; ++i) {
                 for(int j = 0; j < F; ++j) {
                     resultImageData[(row+i)*width+(col+j)] = matrix[i*F+j];
@@ -74,13 +80,11 @@ ResultViewer::ResultViewer(const QImage *before, int F, int D, QWidget *parent) 
 
     for(int i = 0; i < height; ++i) {
         for(int j = F*dimCol; j < width; ++j) {
-            qInfo() << i << " " << j;
             resultImageData[i*width+j] = input[i*width+j];
         }
     }
     for(int i = F*dimRow; i < height; ++i) {
         for(int j = 0; j < dimCol*F; ++j) {
-            qInfo() << i << " " << j;
             resultImageData[i*width+j] = input[i*width+j];
         }
     }
@@ -156,7 +160,7 @@ uchar *ResultViewer::iFFTWCompute(const double *input, int size)
     fftw_destroy_plan(my_plan);
     fftw_cleanup();
 
-    double scaleFactor = arraySize << 1;
+    double scaleFactor = 4*arraySize;
     for(int i = 0; i<arraySize; ++i) {
         double scaledValue = qMax(qMin((tempOut[i] / scaleFactor), 1.0), 0.0);
         out[i] = scaledValue * 255;
