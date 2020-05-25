@@ -94,6 +94,7 @@ ResultViewer::ResultViewer(const QImage *before, int F, int D, QWidget *parent) 
     for(int i = 0; i<height; ++i) {
         for(int j = 0; j<width; ++j) {
             int colorValue = resultImageData[i*width+j];
+            qInfo() << colorValue;
             QRgb color = qRgb(colorValue, colorValue, colorValue);
             resultImage.setPixel(j, i, color);
         }
@@ -123,11 +124,12 @@ double *ResultViewer::FFTWCompute(const uchar *input, int size)
     double *out = new double[arraySize];
 
     for(int i = 0; i<arraySize; ++i) {
-        in[i] = (double)(input[i]/255.0);
+        in[i] = (double)(input[i]);
+        qInfo() << "Input: " <<in[i];
     }
 
     fftw_plan my_plan;
-    my_plan = fftw_plan_r2r_2d(size, size, in, out, FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE);
+    my_plan = fftw_plan_r2r_2d(size, size, &in[0], &out[0], FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE);
     fftw_execute(my_plan);
     fftw_destroy_plan(my_plan);
 
@@ -144,26 +146,23 @@ uchar *ResultViewer::iFFTWCompute(const double *input, int size)
     double *tempOut = new double[arraySize];
     double *in = new double[arraySize];
 
-    /*in[0] = input[0] / sqrt(1.0 / 2 /size);
-    double f = sqrt(1.0 / 2 /size);
-    for(int i = 1; i<arraySize; ++i) {
-        in[i] = (double)input[i] / f;
-    }*/
-
     for(int i = 0; i<arraySize; ++i) {
-        in[i] = (double)input[i];
-    }
+          in[i] = (double)input[i];
+      }
 
     fftw_plan my_plan;
-    my_plan = fftw_plan_r2r_2d(size, size, in, tempOut, FFTW_REDFT01, FFTW_REDFT01, FFTW_ESTIMATE);
+    my_plan = fftw_plan_r2r_2d(size, size, &in[0], &tempOut[0], FFTW_REDFT01, FFTW_REDFT01, FFTW_ESTIMATE);
     fftw_execute(my_plan);
     fftw_destroy_plan(my_plan);
     fftw_cleanup();
 
     double scaleFactor = 4*arraySize;
+
     for(int i = 0; i<arraySize; ++i) {
-        double scaledValue = qMax(qMin((tempOut[i] / scaleFactor), 1.0), 0.0);
-        out[i] = scaledValue * 255;
+        double scaledValue = tempOut[i]/ scaleFactor;
+        if (scaledValue < 0) {scaledValue = 0;}
+        if (scaledValue > 255) {scaledValue = 255;}
+        out[i] = (int)floor(scaledValue);
     }
 
     delete[] in;
