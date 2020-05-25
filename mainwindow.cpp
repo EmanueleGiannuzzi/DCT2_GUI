@@ -54,6 +54,7 @@ void MainWindow::loadPreviewImage()
     this->ui->runButton->setEnabled(true);
     this->ui->dParamSlider->setEnabled(true);
     this->ui->fParamSpinBox->setEnabled(true);
+    this->ui->fParamSpinBox->setValue(1);
 }
 
 void MainWindow::updateFParam()

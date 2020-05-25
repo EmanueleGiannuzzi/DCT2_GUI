@@ -24,13 +24,14 @@ ResultViewer::ResultViewer(const QImage *before, int F, int D, QWidget *parent) 
     const int height = this->beforeImage->height();
     const int arraySize = width*height;
 
-
     const int dimRow = (int)(height / F);
     const int dimCol = (int)(width / F);
 
     const int fArraySize = F*F;
 
-    QVector<uchar*> matrices(dimRow * dimCol);
+    qInfo() << "BANANA";
+
+    QVector<uchar*> matrices;
     for(int k = 0; k+F <= height; k+=F) {
         for(int l = 0; l+F <= width; l+=F) {
             uchar* matrix = new uchar[fArraySize];
@@ -42,46 +43,49 @@ ResultViewer::ResultViewer(const QImage *before, int F, int D, QWidget *parent) 
             matrices.push_back(matrix);
         }
     }
+    qInfo() << "BANANA1";
 
-    QVector<uchar*> compressed(dimRow * dimCol);
+    QVector<uchar*> compressed;//(dimRow * dimCol);
     for(uchar* matrix : matrices) {
         double *arrayResult = ResultViewer::FFTWCompute2D(matrix, F);
         uchar *inverseResult = ResultViewer::iFFTWCompute2D(arrayResult, F);
-
         compressed.push_back(inverseResult);
     }
 
+    qInfo() << "BANANA2";
 
     uchar *resultImageData = new uchar[arraySize];
 
-    for(int k = 0; k < compressed.size(); ++k) {
-        const uchar *matrix = compressed.at(k);
-        int row = (k/dimCol)*F;
-        int col = (k/dimRow)*F;
-        for(int i = 0; i < F; ++i) {
-            for(int j = 0; j < F; ++j) {
-                resultImageData[(row+i)*width+(col+j)] = matrix[i*F+j];
+    for(int k = 0; k < dimRow; ++k) {
+        for(int l = 0; l < dimCol; ++l) {
+            const uchar *matrix = compressed.at(k*dimRow+l);
+            int row = k*F;
+            int col = l*F;
+            qInfo() << row << " " << col;
+            for(int i = 0; i < F; ++i) {
+                for(int j = 0; j < F; ++j) {
+                    resultImageData[(row+i)*width+(col+j)] = matrix[i*F+j];
+                }
             }
         }
     }
 
-    for(int i = F*dimRow; i < height; ++i) {
+    qInfo() << "BANANA3";
+
+    for(int i = 0; i < height; ++i) {
         for(int j = F*dimCol; j < width; ++j) {
+            qInfo() << i << " " << j;
             resultImageData[i*width+j] = input[i*width+j];
         }
     }
+    for(int i = F*dimRow; i < height; ++i) {
+        for(int j = 0; j < dimCol*F; ++j) {
+            qInfo() << i << " " << j;
+            resultImageData[i*width+j] = input[i*width+j];
+        }
+    }
+    qInfo() << "BANANA4";
 
-
-
-    /*const int size = qMin(width, height);//TODO
-
-    //double *arrayResult = ResultViewer::FFTWCompute(this->beforeImage->bits(), size);
-    //uchar *inverseResult = ResultViewer::inverseFFTWCompute(arrayResult, size);
-
-    double *arrayResult = ResultViewer::FFTWCompute2D(input, size);
-    uchar *inverseResult = ResultViewer::iFFTWCompute2D(arrayResult, size);
-*/
-    //QImage resultImage = QImage(*inverseResult, width, height, QImage::Format_Grayscale8);
     QImage resultImage = QImage(width, height, QImage::Format_Grayscale8);
     for(int i = 0; i<height; ++i) {
         for(int j = 0; j<width; ++j) {
@@ -90,11 +94,11 @@ ResultViewer::ResultViewer(const QImage *before, int F, int D, QWidget *parent) 
             resultImage.setPixel(j, i, color);
         }
     }
+    qInfo() << "BANANA5";
 
     delete[] resultImageData;
-    //delete[] arrayResult;
 
-    //TODO: DELETE VECTOR
+    //TODO: DELETE VECTOR?
 
 
     this->afterPixmap = QPixmap::fromImage(resultImage);
@@ -103,6 +107,7 @@ ResultViewer::ResultViewer(const QImage *before, int F, int D, QWidget *parent) 
     afterScene->setSceneRect(this->afterPixmap.rect());
     this->ui->afterGraphicsView->setScene(this->afterScene);
 
+    qInfo() << "DONE";
 
 }
 
@@ -126,7 +131,7 @@ double *ResultViewer::FFTWCompute(const uchar *input, int size)
     return out;
 }
 
-uchar *ResultViewer::inverseFFTWCompute(const double *input, int size)
+uchar *ResultViewer::iFFTWCompute(const double *input, int size)
 {
     const int arraySize = size*size;
 
