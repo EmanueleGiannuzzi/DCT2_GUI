@@ -94,7 +94,6 @@ ResultViewer::ResultViewer(const QImage *before, int F, int D, QWidget *parent) 
     for(int i = 0; i<height; ++i) {
         for(int j = 0; j<width; ++j) {
             int colorValue = resultImageData[i*width+j];
-            qInfo() << colorValue;
             QRgb color = qRgb(colorValue, colorValue, colorValue);
             resultImage.setPixel(j, i, color);
         }
@@ -125,7 +124,6 @@ double *ResultViewer::FFTWCompute(const uchar *input, int size)
 
     for(int i = 0; i<arraySize; ++i) {
         in[i] = (double)(input[i]);
-        qInfo() << "Input: " <<in[i];
     }
 
     fftw_plan my_plan;

@@ -61,9 +61,6 @@
            <property name="alignment">
             <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
            </property>
-           <property name="buddy">
-            <cstring>preview</cstring>
-           </property>
           </widget>
          </item>
          <item row="2" column="0" alignment="Qt::AlignTop">
@@ -84,20 +81,18 @@
        </widget>
       </item>
       <item>
-       <widget class="QWidget" name="preview" native="true">
-        <layout class="QVBoxLayout" name="previewLayout">
-         <item>
-          <widget class="QLabel" name="previewLabel">
-           <property name="text">
-            <string>Preview:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QGraphicsView" name="previewGraphicsView"/>
-         </item>
-        </layout>
-       </widget>
+       <layout class="QVBoxLayout" name="previewLayout">
+        <item>
+         <widget class="QLabel" name="previewLabel">
+          <property name="text">
+           <string>Preview:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGraphicsView" name="previewGraphicsView"/>
+        </item>
+       </layout>
       </item>
       <item>
        <layout class="QGridLayout" name="gridLayout">
