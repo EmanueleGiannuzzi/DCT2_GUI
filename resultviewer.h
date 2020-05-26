@@ -34,8 +34,8 @@ private:
     QGraphicsScene *beforeScene;
     QGraphicsScene *afterScene;
 
-    static double *FFTWCompute(const uchar *input, int size);
-    static uchar *iFFTWCompute(const double *input, int size);
+    static double *FFTWCompute(const double *input, int size);
+    static double *iFFTWCompute(const double *input, int size);
 
 
     static void frequency_modifier(double *frequency_space, double *image_space);
