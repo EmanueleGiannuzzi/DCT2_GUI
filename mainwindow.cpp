@@ -101,6 +101,7 @@ void MainWindow::on_runButton_clicked()
 {
     this->resultWindow = new ResultViewer(this->previewImage, this->ui->fParamSpinBox->value(), this->ui->dParamSlider->value(), this);
     resultWindow->show();
+    //resultWindow->updateAfterImage();
 }
 
 void MainWindow::on_imagePathLineEdit_returnPressed()

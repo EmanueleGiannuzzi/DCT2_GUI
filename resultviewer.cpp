@@ -2,18 +2,21 @@
 #include "ui_resultviewer.h"
 
 #include <fftw3.h>
-#include <QDebug>
-#include <QVector>
+#include <QTimer>
+#include <QProgressBar>
+#include <thread>
 
-#include "imagefilter.h"
-
-
-ResultViewer::ResultViewer(const QImage *before, int F, int D, QWidget *parent) :
+ResultViewer::ResultViewer(const QImage *before, int fParam, int dParam, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ResultViewer),
-    beforeImage(before)
+    beforeImage(before),
+    F(fParam),
+    D(dParam)
 {
     ui->setupUi(this);
+
+//    QProgressBar *progressBar = this->parent()->findChild<QProgressBar*>("progressBar");
+//    progressBar->setEnabled(true);
 
     this->beforePixmap = QPixmap::fromImage(*this->beforeImage);
     this->beforeScene = new QGraphicsScene(this);
@@ -21,21 +24,43 @@ ResultViewer::ResultViewer(const QImage *before, int F, int D, QWidget *parent) 
     this->beforeScene->setSceneRect(this->beforePixmap.rect());
     this->ui->beforeGraphicsView->setScene(this->beforeScene);
 
+    //updateAfterImage();
+    QTimer::singleShot(0, this, SLOT(updateAfterImage()));
+}
+
+void ResultViewer::resizeEvent(QResizeEvent* event)
+{
+    QMainWindow::resizeEvent(event);
+
+    this->ui->beforeGraphicsView->fitInView(this->beforePixmap.rect(), Qt::KeepAspectRatio);
+    this->ui->afterGraphicsView->fitInView(this->afterPixmap.rect(), Qt::KeepAspectRatio);
+}
+
+void ResultViewer::showEvent(QShowEvent *event)
+{
+    QMainWindow::showEvent(event);
+
+    this->ui->beforeGraphicsView->fitInView(this->beforePixmap.rect(), Qt::KeepAspectRatio);
+    this->ui->afterGraphicsView->fitInView(this->afterPixmap.rect(), Qt::KeepAspectRatio);
+}
+
+void ResultViewer::updateAfterImage()
+{
     const int width = this->beforeImage->width();
     const int height = this->beforeImage->height();
-    const int depth = this->depth();
+    //const int depth = this->depth();
     const int arraySize = width*height;
-
-    qInfo() << width << " " << height << " " << depth;
 
     const int dimRow = (int)(height / F);
     const int dimCol = (int)(width / F);
-
     const int fArraySize = F*F;
 
-    qInfo() << "BANANA";
-
     uchar *resultImageData = new uchar[arraySize];
+
+
+//    QProgressBar *progressBar = this->parent()->findChild<QProgressBar*>("progressBar");
+    QProgressBar *progressBar = this->ui->progressBar;
+    progressBar->setRange(0, dimRow*dimCol);
 
     for(int k = 0; k < dimRow; ++k) {
         for(int l = 0; l < dimCol; ++l) {
@@ -58,28 +83,27 @@ ResultViewer::ResultViewer(const QImage *before, int F, int D, QWidget *parent) 
             }
             double *inverseResult = ResultViewer::iFFTWCompute(arrayResult, F);
 
-
-
-            //            ImageFilter::image image(matrix, F, F);
-            //            ImageFilter::filter_image(image, true, ResultViewer::frequency_modifier);
-
             for(int i = 0; i < F; ++i) {
                 for(int j = 0; j < F; ++j) {
                     resultImageData[(row+i)*width+(col+j)] = inverseResult[i*F+j];
                 }
+            }
+
+            if(progressBar != nullptr) {
+                progressBar->setValue(k*dimRow+l);
             }
         }
     }
 
     for(int i = 0; i < height; ++i) {
         for(int j = dimCol*F; j < width; ++j) {
-            resultImageData[i*width+j] = qGray(beforeImage->pixel(j, i));//input[i*width+j];
+            resultImageData[i*width+j] = qGray(beforeImage->pixel(j, i));
         }
     }
 
     for(int i = dimRow*F; i < height; ++i) {
         for(int j = 0; j < dimCol*F; ++j) {
-            resultImageData[i*width+j] = qGray(beforeImage->pixel(j, i));//input[i*width+j];
+            resultImageData[i*width+j] = qGray(beforeImage->pixel(j, i));
         }
     }
 
@@ -92,7 +116,6 @@ ResultViewer::ResultViewer(const QImage *before, int F, int D, QWidget *parent) 
             resultImage.setPixel(j, i, color);
         }
     }
-    qInfo() << "BANANA 5";
 
     delete[] resultImageData;
 
@@ -102,14 +125,12 @@ ResultViewer::ResultViewer(const QImage *before, int F, int D, QWidget *parent) 
     afterScene->setSceneRect(this->afterPixmap.rect());
     this->ui->afterGraphicsView->setScene(this->afterScene);
 
+    this->ui->afterGraphicsView->setEnabled(true);
+    this->ui->afterGraphicsView->fitInView(this->afterPixmap.rect(), Qt::KeepAspectRatio);
 
-    qInfo() << "DONE";
-
-}
-
-void ResultViewer::frequency_modifier(double *frequency_space, double *image_space)
-{
-
+    if(progressBar != nullptr) {
+        progressBar->setValue(progressBar->maximum());
+    }
 }
 
 double *ResultViewer::FFTWCompute(const double *input, int size)
@@ -150,33 +171,16 @@ double *ResultViewer::iFFTWCompute(const double *input, int size)
     fftw_destroy_plan(my_plan);
     fftw_cleanup();
 
-
     double scaleFactor = 4*arraySize;
 
     for(int i = 0; i<arraySize; ++i) {
-        double scaledValue = out[i]/ scaleFactor;
-        if (scaledValue < 0) {scaledValue = 0;}
-        if (scaledValue > 255) {scaledValue = 255;}
+        double scaledValue = qMin(qMax(out[i]/scaleFactor, 0.0), 255.0);
         out[i] = (uchar)floor(scaledValue);
     }
 
     delete[] in;
 
     return out;
-}
-
-void ResultViewer::resizeEvent(QResizeEvent* event)
-{
-    QMainWindow::resizeEvent(event);
-
-    this->ui->beforeGraphicsView->fitInView(this->beforePixmap.rect(), Qt::KeepAspectRatio);
-    this->ui->afterGraphicsView->fitInView(this->afterPixmap.rect(), Qt::KeepAspectRatio);
-}
-
-void ResultViewer::showEvent(QShowEvent *event)
-{
-    this->ui->beforeGraphicsView->fitInView(this->beforePixmap.rect(), Qt::KeepAspectRatio);
-    this->ui->afterGraphicsView->fitInView(this->afterPixmap.rect(), Qt::KeepAspectRatio);
 }
 
 ResultViewer::~ResultViewer()

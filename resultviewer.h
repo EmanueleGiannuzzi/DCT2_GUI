@@ -17,13 +17,15 @@ class ResultViewer : public QMainWindow
     Q_OBJECT
 
 public:
-    ResultViewer(const QImage *before, int F, int D, QWidget *parent = nullptr);
+    ResultViewer(const QImage *before, int fParam, int dParam, QWidget *parent = nullptr);
     ~ResultViewer();
+
 
 private slots:
     void resizeEvent(QResizeEvent* event);
-
     void showEvent(QShowEvent *event);
+
+    void updateAfterImage();
 
 private:
     Ui::ResultViewer *ui;
@@ -33,12 +35,12 @@ private:
     QPixmap afterPixmap;
     QGraphicsScene *beforeScene;
     QGraphicsScene *afterScene;
+    int F;
+    int D;
 
     static double *FFTWCompute(const double *input, int size);
     static double *iFFTWCompute(const double *input, int size);
 
-
-    static void frequency_modifier(double *frequency_space, double *image_space);
 };
 
 #endif // RESULTVIEWER_H
