@@ -38,23 +38,23 @@ void MainWindow::loadPreviewImage()
     QString imagePath = this->ui->imagePathLineEdit->text();
 
     this->previewImage = new QImage();
-    this->previewImage->load(imagePath);
+    if(this->previewImage->load(imagePath)) {
+        this->previewPixmap = QPixmap::fromImage(*previewImage);
 
-    this->previewPixmap = QPixmap::fromImage(*previewImage);
+        scene = new QGraphicsScene(this);
+        scene->addPixmap(this->previewPixmap);
+        scene->setSceneRect(this->previewPixmap.rect());
 
-    scene = new QGraphicsScene(this);
-    scene->addPixmap(this->previewPixmap);
-    scene->setSceneRect(this->previewPixmap.rect());
+        this->ui->previewGraphicsView->setScene(this->scene);
+        this->ui->previewGraphicsView->fitInView(this->previewPixmap.rect(), Qt::KeepAspectRatio);
 
-    this->ui->previewGraphicsView->setScene(this->scene);
-    this->ui->previewGraphicsView->fitInView(this->previewPixmap.rect(), Qt::KeepAspectRatio);
+        updateFParam();
 
-    updateFParam();
-
-    this->ui->runButton->setEnabled(true);
-    this->ui->dParamSlider->setEnabled(true);
-    this->ui->fParamSpinBox->setEnabled(true);
-    this->ui->fParamSpinBox->setValue(1);
+        this->ui->runButton->setEnabled(true);
+        this->ui->dParamSlider->setEnabled(true);
+        this->ui->fParamSpinBox->setEnabled(true);
+        this->ui->fParamSpinBox->setValue(1);
+    }
 }
 
 void MainWindow::updateFParam()
@@ -75,9 +75,9 @@ void MainWindow::updateDParam()
 
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
-   QMainWindow::resizeEvent(event);
+    QMainWindow::resizeEvent(event);
 
-   this->ui->previewGraphicsView->fitInView(this->previewPixmap.rect(), Qt::KeepAspectRatio);
+    this->ui->previewGraphicsView->fitInView(this->previewPixmap.rect(), Qt::KeepAspectRatio);
 }
 
 void MainWindow::on_fParamSpinBox_valueChanged(int arg1)
