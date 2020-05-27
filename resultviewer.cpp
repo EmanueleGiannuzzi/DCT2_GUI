@@ -74,6 +74,7 @@ void ResultViewer::updateAfterImage()
             }
 
             double *arrayResult = ResultViewer::FFTWCompute(matrix, F);
+            delete[] matrix;
             for(int i = 0; i < F; ++i) {
                 for(int j = 0; j < F; ++j) {
                     if (i+j >= D){
@@ -82,12 +83,15 @@ void ResultViewer::updateAfterImage()
                 }
             }
             double *inverseResult = ResultViewer::iFFTWCompute(arrayResult, F);
+            delete[] arrayResult;
 
             for(int i = 0; i < F; ++i) {
                 for(int j = 0; j < F; ++j) {
                     resultImageData[(row+i)*width+(col+j)] = inverseResult[i*F+j];
                 }
             }
+
+            delete[] inverseResult;
 
             if(progressBar != nullptr) {
                 progressBar->setValue(k*dimRow+l);
