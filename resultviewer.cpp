@@ -2,9 +2,7 @@
 #include "ui_resultviewer.h"
 
 #include <fftw3.h>
-#include <QTimer>
 #include <QProgressBar>
-#include <thread>
 #include <math.h>
 
 ResultViewer::ResultViewer(const QImage *before, int fParam, int dParam, QWidget *parent) :
