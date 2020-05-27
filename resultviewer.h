@@ -5,8 +5,6 @@
 
 #include <QGraphicsScene>
 #include <fftw3.h>
-#include <math.h>
-#include <QDebug>
 
 namespace Ui {
 class ResultViewer;

@@ -5,6 +5,7 @@
 #include <QTimer>
 #include <QProgressBar>
 #include <thread>
+#include <math.h>
 
 ResultViewer::ResultViewer(const QImage *before, int fParam, int dParam, QWidget *parent) :
     QMainWindow(parent),
@@ -15,17 +16,14 @@ ResultViewer::ResultViewer(const QImage *before, int fParam, int dParam, QWidget
 {
     ui->setupUi(this);
 
-//    QProgressBar *progressBar = this->parent()->findChild<QProgressBar*>("progressBar");
-//    progressBar->setEnabled(true);
-
     this->beforePixmap = QPixmap::fromImage(*this->beforeImage);
     this->beforeScene = new QGraphicsScene(this);
     this->beforeScene->addPixmap(this->beforePixmap);
     this->beforeScene->setSceneRect(this->beforePixmap.rect());
     this->ui->beforeGraphicsView->setScene(this->beforeScene);
 
-    //updateAfterImage();
-    QTimer::singleShot(0, this, SLOT(updateAfterImage()));
+    updateAfterImage();
+//    QTimer::singleShot(0, this, SLOT(updateAfterImage()));
 }
 
 void ResultViewer::resizeEvent(QResizeEvent* event)
@@ -48,7 +46,6 @@ void ResultViewer::updateAfterImage()
 {
     const int width = this->beforeImage->width();
     const int height = this->beforeImage->height();
-    //const int depth = this->depth();
     const int arraySize = width*height;
 
     const int dimRow = (int)(height / F);
@@ -58,8 +55,8 @@ void ResultViewer::updateAfterImage()
     uchar *resultImageData = new uchar[arraySize];
 
 
-//    QProgressBar *progressBar = this->parent()->findChild<QProgressBar*>("progressBar");
-    QProgressBar *progressBar = this->ui->progressBar;
+    QProgressBar *progressBar = this->parent()->findChild<QProgressBar*>("progressBar");
+    progressBar->setEnabled(true);
     progressBar->setRange(0, dimRow*dimCol);
 
     for(int k = 0; k < dimRow; ++k) {
