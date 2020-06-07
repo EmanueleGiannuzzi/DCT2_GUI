@@ -13,7 +13,7 @@ ResultViewer::ResultViewer(const QImage *before, int fParam, int dParam, QWidget
     D(dParam)
 {
     ui->setupUi(this);
-
+    this->setWindowTitle("ResultWindow");
     this->beforePixmap = QPixmap::fromImage(*this->beforeImage);
     this->beforeScene = new QGraphicsScene(this);
     this->beforeScene->addPixmap(this->beforePixmap);
