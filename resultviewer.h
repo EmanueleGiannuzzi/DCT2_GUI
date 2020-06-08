@@ -25,6 +25,8 @@ private slots:
 
     void updateAfterImage();
 
+    void on_actionSave_As_triggered();
+
 private:
     Ui::ResultViewer *ui;
 

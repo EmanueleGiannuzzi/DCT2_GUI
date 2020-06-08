@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     this->setWindowTitle("BMP Image Compression");
+    this->setWindowIcon(QIcon(":/Icon/bmp.png"));
 }
 
 MainWindow::~MainWindow()

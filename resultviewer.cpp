@@ -4,6 +4,8 @@
 #include <fftw3.h>
 #include <QProgressBar>
 #include <math.h>
+#include <QFileDialog>
+#include <QStandardPaths>
 
 ResultViewer::ResultViewer(const QImage *before, int fParam, int dParam, QWidget *parent) :
     QMainWindow(parent),
@@ -14,6 +16,7 @@ ResultViewer::ResultViewer(const QImage *before, int fParam, int dParam, QWidget
 {
     ui->setupUi(this);
     this->setWindowTitle("ResultWindow");
+    this->setWindowIcon(QIcon(":/Icon/bmp.png"));
     this->beforePixmap = QPixmap::fromImage(*this->beforeImage);
     this->beforeScene = new QGraphicsScene(this);
     this->beforeScene->addPixmap(this->beforePixmap);
@@ -188,4 +191,17 @@ ResultViewer::~ResultViewer()
     //delete beforeImage;//Probabilmente viene già eliminatata da MainWindow
     delete beforeScene;
     delete afterScene;
+}
+
+void ResultViewer::on_actionSave_As_triggered()
+{
+    QImage image = this->afterPixmap.toImage();
+    QString imageDirectory = QStandardPaths::locate(QStandardPaths::PicturesLocation, "", QStandardPaths::LocateDirectory);
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image File"),
+                                                    imageDirectory+"/CompressedImage.bmp",
+                                                    tr("Bitmap (*.bmp)"));
+    if (!fileName.isEmpty())
+    {
+      image.save(fileName);
+    }
 }

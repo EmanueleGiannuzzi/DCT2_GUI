@@ -34,7 +34,8 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-RESOURCES +=
+RESOURCES += \
+    resources.qrc
 
 win32: LIBS += $$PWD/fftw-3.3.5-dll64/libfftw3-3.dll
 unix: LIBS += -lfftw3
