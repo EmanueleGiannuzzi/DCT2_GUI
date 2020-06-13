@@ -24,7 +24,6 @@ ResultViewer::ResultViewer(const QImage *before, int fParam, int dParam, QWidget
     this->ui->beforeGraphicsView->setScene(this->beforeScene);
 
     updateAfterImage();
-//    QTimer::singleShot(0, this, SLOT(updateAfterImage()));
 }
 
 void ResultViewer::resizeEvent(QResizeEvent* event)
@@ -188,7 +187,6 @@ double *ResultViewer::iFFTWCompute(const double *input, int size)
 ResultViewer::~ResultViewer()
 {
     delete ui;
-    //delete beforeImage;//Probabilmente viene già eliminatata da MainWindow
     delete beforeScene;
     delete afterScene;
 }
