@@ -15,7 +15,8 @@ ResultViewer::ResultViewer(const QImage *before, int fParam, int dParam, QWidget
     D(dParam)
 {
     ui->setupUi(this);
-    this->setWindowTitle("ResultWindow");
+    this->setWindowTitle("Resuls");
+    ui->compressedImageLabel->setText(QString::asprintf("Compressed Image (D=%d, F=%d)", dParam, fParam));
     this->setWindowIcon(QIcon(":/Icon/bmp.png"));
     this->beforePixmap = QPixmap::fromImage(*this->beforeImage);
     this->beforeScene = new QGraphicsScene(this);
