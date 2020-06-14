@@ -16,7 +16,7 @@ ResultViewer::ResultViewer(const QImage *before, int fParam, int dParam, QWidget
 {
     ui->setupUi(this);
     this->setWindowTitle("Resuls");
-    ui->compressedImageLabel->setText(QString::asprintf("Compressed Image (D=%d, F=%d)", dParam, fParam));
+    ui->compressedImageLabel->setText(QString::asprintf("Compressed Image (D=%d, F=%d)", D, F));
     this->setWindowIcon(QIcon(":/Icon/bmp.png"));
     this->beforePixmap = QPixmap::fromImage(*this->beforeImage);
     this->beforeScene = new QGraphicsScene(this);
@@ -194,10 +194,12 @@ ResultViewer::~ResultViewer()
 
 void ResultViewer::on_actionSave_As_triggered()
 {
+
     QImage image = this->afterPixmap.toImage();
     QString imageDirectory = QStandardPaths::locate(QStandardPaths::PicturesLocation, "", QStandardPaths::LocateDirectory);
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image File"),
-                                                    imageDirectory+"/CompressedImage.bmp",
+                                                    imageDirectory+
+                                                    QString::asprintf("(D=%d, F=%d).bmp", D, F),
                                                     tr("Bitmap (*.bmp)"));
     if (!fileName.isEmpty())
     {
